@@ -9,23 +9,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebServlet(name = "StudentListServlet", urlPatterns = {"/studentList"})
-public class StudentListServlet extends HttpServlet {
+@WebServlet(name = "StudentAddServlet", urlPatterns = {"/studentAdd"})
+public class StudentAddServlet extends HttpServlet {
     
-        protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
                 HttpSession session = request.getSession();
                 if (session.getAttribute("studentList") == null) {
                     session.setAttribute("studentList", new ArrayList<Student>());
                 }
-                if (session.getAttribute("visitCounter") == null) {
-                    session.setAttribute("visitCounter", 0);
-                }
-                Integer counter  = (Integer) session.getAttribute("visitCounter") + 1;
-                session.setAttribute("visitCounter", counter);
                 List<Student> students = (ArrayList<Student>) session.getAttribute("studentList");
-                request.setAttribute("students", students);
-                request.setAttribute("visits", counter);
-                request.getRequestDispatcher("studentList.jsp").forward(request, response);
+                String fname = request.getParameter("firstName");
+                String lname = request.getParameter("lastName");
+                String email = request.getParameter("emailAddress");
+                if(!fname.isEmpty() && !lname.isEmpty() && !email.isEmpty()){
+                    students.add(new Student(fname, lname, email));
+                }
+                session.setAttribute("studentList", students);
+                response.sendRedirect("/TPSI_5/studentList");    
+        }
     }
-}
